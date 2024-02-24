@@ -21,13 +21,27 @@ const Index = () => {
 
     const today = new Date();
     const birthDateObj = new Date(birthDate);
-    let calculatedAge = today.getFullYear() - birthDateObj.getFullYear();
-    const m = today.getMonth() - birthDateObj.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDateObj.getDate())) {
+    const currentYear = today.getFullYear();
+    const birthYear = birthDateObj.getFullYear();
+    const currentMonth = today.getMonth();
+    const birthMonth = birthDateObj.getMonth();
+    const currentDay = today.getDate();
+    const birthDay = birthDateObj.getDate();
+
+    let calculatedAge = currentYear - birthYear;
+    let calculatedMonths = currentMonth - birthMonth;
+    if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
       calculatedAge--;
+      calculatedMonths = 12 + currentMonth - birthMonth;
+    }
+    if (currentDay < birthDay) {
+      calculatedMonths--;
+      if (calculatedMonths < 0) {
+        calculatedMonths = 11;
+      }
     }
 
-    setAge(calculatedAge);
+    setAge({ years: calculatedAge, months: calculatedMonths });
   };
 
   return (
@@ -44,9 +58,9 @@ const Index = () => {
           <Button colorScheme="teal" mt={4} onClick={calculateAge} leftIcon={<FaBirthdayCake />}>
             Calculate Age
           </Button>
-          {age !== "" && (
+          {age.years !== undefined && age.months !== undefined && (
             <Text fontSize="xl" mt={4}>
-              Your age is: {age} years
+              Your age is: {age.years} years and {age.months} months
             </Text>
           )}
         </Box>
